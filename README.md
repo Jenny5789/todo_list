@@ -1,4 +1,4 @@
-# 📋 그룹형 To-Do List 웹앱
+# 📋 그룹형 To-Do List
 
 > 그룹별 할 일 관리와 메모 기능을 지원하는 로컬 저장 기반 웹 애플리케이션
 
@@ -18,11 +18,11 @@
 
 | 홈 화면 (빈 상태) | 전체 보기 |
 |-----------|-----------|
-| ![home](home.png) | ![all](all.png) |
+| ![home](./images/home.png ) | ![all](./images/all.png) |
 
 | 예정 필터 | 완성 필터 |
 |-----------|-----------|
-| ![will](will.png) | ![done](done.png) |
+| ![will](./images/will.png) | ![done](./images/done.png) |
 
 ---
 
