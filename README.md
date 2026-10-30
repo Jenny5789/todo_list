@@ -1,139 +1,118 @@
-# 📋 그룹형 To-Do List
+# 그룹형 To-Do List
 
-> 그룹별 할 일 관리와 메모 기능을 지원하는 로컬 저장 기반 웹 애플리케이션
+그룹별 할 일 관리와 메모 기능을 지원하는 로컬 저장 기반 웹 애플리케이션. 할 일을 그룹으로 나눠 관리하고, 각 할 일에 메모를 추가.
 
-![HTML5](https://img.shields.io/badge/HTML5-E34C26?style=flat-square&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![HTML5](https://img.shields.io/badge/HTML5-E34C26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
----
+## 기술 스택
 
-## 📌 소개
+| 구분 | 기술 | 용도 |
+|---|---|---|
+| 언어 | HTML5, CSS3, JavaScript (Vanilla) | 구조, 스타일, 기능 로직 |
+| 브라우저 API | localStorage | 데이터 저장 |
 
-할 일을 **그룹별로 체계적으로 관리**하고, **상세한 메모를 추가**할 수 있는 웹앱입니다.  
+## 구현 역량
 
----
+관련 이론은 [파이썬 기초 역량 정리](https://github.com/Jenny5789/python/tree/main/study_archive) 참조.
 
-## 📷 실행 화면
+| 역량 | 구현 내용 | 코드 | 이론 |
+|---|---|---|---|
+| 데이터 CRUD | 그룹, 할 일, 메모의 추가, 수정, 삭제<br>할 일 텍스트, 마감일, 그룹명은 클릭하면 입력창으로 바뀌는 인라인 수정 | [핵심 코드](#핵심-코드) | [줄 편집기 insert, delete, replace](https://github.com/Jenny5789/python/blob/main/study_archive/data_structures/02_line_editor.py) |
+| 로컬 영속성 | 그룹과 할 일 데이터를 JSON 문자열로 변환해 localStorage에 저장하고 시작 시 로드 | [핵심 코드](#핵심-코드) | [줄 편집기 save, load](https://github.com/Jenny5789/python/blob/main/study_archive/data_structures/02_line_editor.py) |
+| 데이터 구조 | 그룹별 객체에 할 일 배열과 테마를 담고, id로 find, filter 조회 | [script.js](script.js) | [자료형(list, dict)](https://github.com/Jenny5789/python/blob/main/study_archive/theory/03_data_types.md) |
+| 렌더링과 필터 | 데이터 변경 시 전체 그룹을 다시 렌더링<br>상태 필터(전체, 예정, 진행중, 완성)는 클래스로 숨김 처리<br>입력 텍스트는 escapeHtml로 이스케이프 | [script.js](script.js) | [흐름 제어](https://github.com/Jenny5789/python/blob/main/study_archive/theory/07_flow_control.md) |
 
-| 홈 화면 (빈 상태) | 전체 보기 |
-|-----------|-----------|
-| ![home](./images/home.png ) | ![all](./images/all.png) |
+## 핵심 코드
 
-| 예정 필터 | 완성 필터 |
-|-----------|-----------|
-| ![will](./images/will.png) | ![done](./images/done.png) |
+### 할 일 CRUD
 
----
+[script.js](script.js)
 
-## ✨ 주요 기능
+```javascript
+// 추가 (라인편집기 insert)
+const newTodo = {
+    id: Date.now(),
+    text: todoText,
+    status: 'todo',
+    dueDate: dateInput.value || null,
+    createdDate: new Date().toISOString().split('T')[0],
+    memo: ''
+};
+allTodos[groupName].todos.push(newTodo);
 
-- 📂 **그룹 기반 관리** — 여러 카테고리로 할 일 분류
-- 💾 **자동 로컬 저장** — 브라우저 저장소를 통한 영구 데이터 보존
-- 📝 **메모 기능** — 각 할 일에 상세 메모 작성 및 수정
-- 🎨 **테마 커스터마이징** — 6가지 색상 테마로 그룹 구분
-- 🔍 **상태 필터링** — 예정 / 진행중 / 완성 상태별 조회
-- 📅 **날짜 관리** — 생성일 및 마감일 기록
-- 🖱️ **인라인 편집** — 클릭으로 바로 수정 가능
+// 수정 (라인편집기 replace)
+const todo = allTodos[groupName].todos.find(t => t.id === todoId);
+todo.text = newText;
 
----
+// 삭제 (라인편집기 delete)
+allTodos[groupName].todos = allTodos[groupName].todos.filter(t => t.id !== todoId);
 
-## 🎨 색상 테마
-
-| 테마 | 코드 | 
-|------|------|
-| 🔴 빨강 | `theme-red` | 
-| 🟠 주황 | `theme-default` | 
-| 🟡 노랑 | `theme-yellow` |
-| 🟢 초록 | `theme-green` |
-| 🔵 파랑 | `theme-blue` |
-| 🟣 보라 | `theme-purple` |
-
----
-
-## 🚀 사용 방법
-
-### 1. 실행
-```bash
-# index.html을 브라우저로 열기
+// 모든 변경 뒤 저장하고 다시 그림
+saveAllData();
+renderAllGroups();
 ```
 
-### 2. 그룹 및 할 일 추가
+- 할 일은 id, 텍스트, 상태, 마감일, 생성일, 메모를 가진 객체로 관리
+- 수정과 삭제는 id로 대상을 찾아 처리
+- 변경마다 저장과 전체 렌더링을 호출해 화면과 데이터를 일치시킴
 
-**새 그룹 생성**
-```
-1. "✍️ 새 그룹 직접 입력하기" 선택
-2. 그룹명 입력
-3. 색상 선택
-4. 할 일 입력 후 [할 일 등록] 또는 Enter
-```
+### localStorage 저장과 불러오기
 
-**기본 목록에 추가**
-```
-1. "📁 그룹 미지정" 선택
-2. 할 일 입력 후 [할 일 등록] 또는 Enter
-```
+[script.js](script.js)
 
-### 3. 할 일 관리
+```javascript
+function saveAllData() {
+    const dataToSave = { todos: allTodos, groups: allGroups };
+    localStorage.setItem('todoAppData', JSON.stringify(dataToSave));
+}
 
-| 작업 | 방법 |
-|------|------|
-| 텍스트 수정 | 할 일 텍스트 클릭 → 수정 후 Enter |
-| 마감일 설정 | 마감일 클릭 → 날짜 선택 |
-| 상태 변경 | [예정/진행중/완성] 드롭다운 선택 |
-| 메모 추가 | [+ 📝 추가] → 입력 → [저장] |
-| 메모 수정 | [수정] → 입력 → [저장] |
-| 삭제 | [🗑️] 버튼 클릭 |
-
-### 4. 필터링
-```
-상단 탭에서 상태 선택:
-- 전체 보기
-- 예정
-- 진행중
-- 완성
+function loadAllData() {
+    const savedData = localStorage.getItem('todoAppData');
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        allTodos = data.todos || {};
+        allGroups = data.groups || Object.keys(allTodos);
+    }
+    // (try-catch와 로그 출력은 생략)
+}
 ```
 
----
+- 그룹 객체와 그룹 순서 배열을 하나의 JSON 문자열로 저장
+- 페이지 로드 시 저장된 데이터를 복원
 
-## 🗂️ 파일 구조
+## 주요 기능
+
+| 기능 | 설명 |
+|---|---|
+| 그룹 관리 | 새 그룹 직접 입력 또는 그룹 미지정 목록 사용<br>그룹명 수정, 그룹 삭제, 6가지 색상 테마 |
+| 할 일 관리 | 할 일 추가, 텍스트와 마감일 인라인 수정, 삭제<br>상태(예정, 진행중, 완성) 변경 |
+| 메모 | 할 일마다 메모 추가, 수정, 삭제 |
+| 상태 필터 | 전체, 예정, 진행중, 완성 탭으로 조회 |
+| 자동 저장 | 변경할 때마다 브라우저에 저장 |
+
+<img src="images/all.png" width="48%" alt="전체 보기">
+<img src="images/home.png" width="48%" alt="홈 화면">
+
+<details>
+<summary>전체 화면 보기</summary>
+
+<img src="images/will.png" width="600" alt="예정 필터">
+<img src="images/done.png" width="600" alt="완성 필터">
+
+</details>
+
+## 파일 구조
 
 ```
-├── index.html       # HTML 구조
-├── style.css        # 스타일 (6가지 색상 테마)
-├── script.js        # 전체 기능 로직
-├── README.md        # 프로젝트 문서
-└── images/
-    ├── home.png     # 홈 화면
-    ├── all.png      # 전체 보기 
-    ├── will.png     # 예정 필터 
-    └── done.png     # 완성 필터
+todo_list/
+├── index.html    # HTML 구조
+├── style.css     # 스타일 (6가지 색상 테마)
+├── script.js     # 전체 기능 로직
+└── images/       # README 스크린샷
 ```
 
----
+## 실행 방법
 
-## 🛠️ 기술 스택
-
-- **Language** — HTML5, CSS3, Vanilla JavaScript
-- **Storage** — Browser localStorage API
-- **Design** — Responsive CSS (Flexbox)
-
----
-
-## 💻 브라우저 호환성
-
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
-
----
-
-## 📝 라이선스
-
-MIT License
-
----
-
-## 👩‍💻 개발자
-- GitHub: [@Jenny5789](https://github.com/Jenny5789)
+`index.html`을 브라우저로 열기.
