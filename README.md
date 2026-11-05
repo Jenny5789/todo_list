@@ -1,4 +1,4 @@
-# 그룹형 To-Do List &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small><small><small>2026.06</small></small></small>
+# 그룹형 To-Do List &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small><small><small>2026.06</small></small></small>
 
 HTML, CSS, JavaScript로 만든 그룹형 할 일 관리 웹 앱.
 
