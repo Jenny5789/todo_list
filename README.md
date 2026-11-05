@@ -1,4 +1,4 @@
-# 그룹형 To-Do List
+# 그룹형 To-Do List &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small><small><small>2026.06</small></small></small>
 
 HTML, CSS, JavaScript로 만든 그룹형 할 일 관리 웹 앱.
 
@@ -19,7 +19,7 @@ HTML, CSS, JavaScript로 만든 그룹형 할 일 관리 웹 앱.
 줄 편집기가 한 줄씩 넣고, 고치고, 지우듯이 그룹 안의 할 일 배열을 같은 방식으로 조작.
 
 ```javascript
-// 추가 (줄 편집기 insert)
+// 추가 (줄 편집기 insert): id, 텍스트, 상태, 마감일, 생성일, 메모를 가진 객체
 const newTodo = {
     id: Date.now(),
     text: todoText,
@@ -30,21 +30,17 @@ const newTodo = {
 };
 allTodos[groupName].todos.push(newTodo);
 
-// 수정 (줄 편집기 replace)
+// 수정 (줄 편집기 replace): id로 대상을 찾아 처리
 const todo = allTodos[groupName].todos.find(t => t.id === todoId);
 todo.text = newText;
 
 // 삭제 (줄 편집기 delete)
 allTodos[groupName].todos = allTodos[groupName].todos.filter(t => t.id !== todoId);
 
-// 모든 변경 뒤 저장하고 다시 그림
+// 모든 변경 뒤 저장하고 전체를 다시 그려 화면과 데이터를 일치시킴
 saveAllData();
 renderAllGroups();
 ```
-
-- 할 일은 id, 텍스트, 상태, 마감일, 생성일, 메모를 가진 객체로 관리
-- 수정과 삭제는 id로 대상을 찾아 처리
-- 변경할 때마다 저장과 전체 렌더링을 호출해 화면과 데이터를 일치시킴
 
 ### 저장과 불러오기
 
@@ -63,23 +59,19 @@ function loadAllData() {
     if (savedData) {
         const data = JSON.parse(savedData);
         allTodos = data.todos || {};
-        allGroups = data.groups || Object.keys(allTodos);
+        allGroups = data.groups || Object.keys(allTodos);   // 순서가 없으면 그룹 이름으로 복원
     }
     // (try-catch와 로그 출력은 생략)
 }
 ```
 
-- 그룹별 할 일 객체와 그룹 순서 배열을 하나의 JSON 문자열로 저장
-- 그룹 순서가 없으면 저장된 그룹 이름으로 순서를 다시 만듦
-
 ## 주요 기능
-
-데이터는 그룹 이름을 키로 하는 객체에 할 일 배열과 테마를 담아 관리([자료형 list, dict](https://github.com/Jenny5789/python/blob/main/study_archive/theory/03_data_types.md)). 입력한 글자는 escapeHtml로 바꿔서 화면에 표시.
 
 | 기능 | 설명 |
 |---|---|
 | 그룹 관리 | 새 그룹 직접 입력 또는 그룹 미지정 목록 사용<br>그룹명 수정, 그룹 삭제, 6가지 색상 테마 |
-| 할 일 관리 | 할 일 추가, 텍스트와 마감일 인라인 수정(클릭하면 입력창으로 바뀜), 삭제<br>상태(예정, 진행중, 완성) 변경 |
+| 할 일 관리 | 할 일 추가, 텍스트와 마감일 인라인 수정(클릭하면 입력창으로 바뀜), 삭제<br>상태(예정, 진행중, 완성) 변경, 입력한 글자는 escapeHtml로 바꿔서 표시 |
+| 데이터 구조 | 그룹 이름을 키로 하는 객체에 할 일 배열과 테마를 담아 관리([list, dict](https://github.com/Jenny5789/python/blob/main/study_archive/theory/03_data_types.md)) |
 | 메모 | 할 일마다 메모 추가, 수정, 삭제 |
 | 상태 필터 | 전체, 예정, 진행중, 완성 탭으로 조회 |
 | 자동 저장 | 변경할 때마다 브라우저에 저장 |
