@@ -1,104 +1,122 @@
-# 그룹형 To-Do List &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<sup><sub>2026.06</sub></sup>
+<div align="center">
 
-HTML, CSS, JavaScript로 만든 그룹형 할 일 관리 웹 앱.
+# 그룹형 To-Do List
 
-할 일을 그룹으로 나눠 관리하고, 할 일마다 메모를 달 수 있으며, 모든 데이터는 브라우저(localStorage)에 저장.
+그룹·CRUD·localStorage를 Vanilla JS로 구현한 **프론트엔드 웹 앱**
 
-![HTML5](https://img.shields.io/badge/HTML5-E34C26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+`HTML5` · `CSS3` · `JavaScript (Vanilla)`
 
-<img src="images/all.png" width="500" alt="전체 보기">
+<img src="images/home.png" alt="홈 화면" width="88%" />
 
-## 핵심 코드
+</div>
 
-### 할 일 CRUD
+---
 
-[script.js](script.js) · [이론 정리: 줄 편집기](https://github.com/Jenny5789/python/blob/main/study_archive/data_structures/02_line_editor.py)
+## 1. 프로젝트 개요
 
-줄 편집기가 한 줄씩 넣고, 고치고, 지우듯이 그룹 안의 할 일 배열을 같은 방식으로 조작.
+- **배경:** 프레임워크 없이 JS 기본기만으로 그룹·CRUD·저장을 직접 구현
+- **목표:** 그룹별 할 일 관리, 상태 추적, 메모, 자동 저장을 하나의 화면에서 제공
+- **기간:** 2026.06
+- **규모:** 단일 파일 / 그룹 6가지 색상 테마 / 상태 3종
 
-```javascript
-// 추가 (줄 편집기 insert): id, 텍스트, 상태, 마감일, 생성일, 메모를 가진 객체
-const newTodo = {
-    id: Date.now(),
-    text: todoText,
-    status: 'todo',
-    dueDate: dateInput.value || null,
-    createdDate: new Date().toISOString().split('T')[0],
-    memo: ''
-};
-allTodos[groupName].todos.push(newTodo);
+| 영역 | 기술 | 사용 이유 |
+| --- | --- | --- |
+| 마크업 | HTML5 | 시맨틱 구조 |
+| 스타일 | CSS3 | 6가지 그룹 색상 테마, 반응형 레이아웃 |
+| 로직 | JavaScript (Vanilla) | 프레임워크 없이 DOM 조작·이벤트 처리 직접 구현 |
+| 저장 | localStorage | 서버 없이 브라우저 내 영구 저장 |
 
-// 수정 (줄 편집기 replace): id로 대상을 찾아 처리
-const todo = allTodos[groupName].todos.find(t => t.id === todoId);
-todo.text = newText;
+---
 
-// 삭제 (줄 편집기 delete)
-allTodos[groupName].todos = allTodos[groupName].todos.filter(t => t.id !== todoId);
+## 2. 주요 화면
 
-// 모든 변경 뒤 저장하고 전체를 다시 그려 화면과 데이터를 일치시킴
-saveAllData();
-renderAllGroups();
-```
+| 홈 화면 | 전체 목록 |
+| --- | --- |
+| <img src="images/home.png" width="100%" alt="홈 화면"> | <img src="images/all.png" width="100%" alt="전체 목록"> |
+| ① 그룹 목록과 할 일 추가 | ② 전체 필터로 모든 할 일 조회 |
 
-### 저장과 불러오기
+| 완성 항목 | 예정 항목 |
+| --- | --- |
+| <img src="images/done.png" width="100%" alt="완성 항목"> | <img src="images/will.png" width="100%" alt="예정 항목"> |
+| ③ 완성 탭 필터 | ④ 예정 탭 필터 |
 
-[script.js](script.js) · [이론 정리: 줄 편집기 save, load](https://github.com/Jenny5789/python/blob/main/study_archive/data_structures/02_line_editor.py)
+---
 
-줄 편집기의 save, load처럼 전체 데이터를 JSON 문자열로 바꿔 localStorage에 저장하고, 페이지를 열 때 다시 객체로 복원.
+## 3. 주요 기능
 
-```javascript
-function saveAllData() {
-    const dataToSave = { todos: allTodos, groups: allGroups };
-    localStorage.setItem('todoAppData', JSON.stringify(dataToSave));
-}
+### 3-1. 그룹 관리
+- 새 그룹 직접 입력, 그룹명 인라인 수정, 그룹 삭제
+- 6가지 색상 테마 선택
 
-function loadAllData() {
-    const savedData = localStorage.getItem('todoAppData');
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        allTodos = data.todos || {};
-        allGroups = data.groups || Object.keys(allTodos);   // 순서가 없으면 그룹 이름으로 복원
-    }
-    // (try-catch와 로그 출력은 생략)
-}
-```
+### 3-2. 할 일 CRUD
+- 할 일 추가, 텍스트·마감일 인라인 수정(클릭 시 입력창 전환), 삭제
+- 상태(예정 / 진행중 / 완성) 변경
 
-## 주요 기능
+### 3-3. 메모
+- 할 일마다 메모 추가, 수정, 삭제
 
-| 기능 | 설명 |
-|---|---|
-| 그룹 관리 | 새 그룹 직접 입력 또는 그룹 미지정 목록 사용<br>그룹명 수정, 그룹 삭제, 6가지 색상 테마 |
-| 할 일 관리 | 할 일 추가, 텍스트와 마감일 인라인 수정(클릭하면 입력창으로 바뀜), 삭제<br>상태(예정, 진행중, 완성) 변경, 입력한 글자는 escapeHtml로 바꿔서 표시 |
-| 데이터 구조 | 그룹 이름을 키로 하는 객체에 할 일 배열과 테마를 담아 관리([list, dict](https://github.com/Jenny5789/python/blob/main/study_archive/theory/03_data_types.md)) |
-| 메모 | 할 일마다 메모 추가, 수정, 삭제 |
-| 상태 필터 | 전체, 예정, 진행중, 완성 탭으로 조회 |
-| 자동 저장 | 변경할 때마다 브라우저에 저장 |
+### 3-4. 상태 필터
+- 전체 / 예정 / 진행중 / 완성 탭으로 조회
+
+### 3-5. 자동 저장
+- 변경할 때마다 localStorage에 즉시 저장, 새로고침 후에도 데이터 유지
+
+---
+
+## 4. 문제 해결 경험
+
+### 1) XSS 방지
+
+- **문제:** 사용자가 입력한 텍스트를 innerHTML에 그대로 삽입하면 스크립트 실행 가능
+- **원인 분석:** `innerHTML`은 HTML로 파싱되어 `<script>` 태그 등이 실행됨
+- **해결:** `escapeHtml` 함수로 `<`, `>`, `&` 등 특수 문자를 엔티티로 치환 후 렌더링
+- **결과:** 사용자 입력이 항상 텍스트로만 표시
+
+### 2) 그룹 순서 보존
+
+- **문제:** 그룹 데이터를 객체(`{}`)에 저장하면 그룹 추가 순서가 보장되지 않음
+- **원인 분석:** 자바스크립트 객체는 정수형 키를 먼저 정렬하는 스펙이 있어 순서 의존 불가
+- **해결:** 순서 정보를 담는 `allGroups` 배열을 별도로 유지해 렌더링 순서 제어
+- **결과:** 그룹 추가·삭제 후에도 사용자가 지정한 순서 유지
+
+### 3) localStorage 복원 실패 처리
+
+- **문제:** 저장된 JSON이 손상됐을 때 `JSON.parse` 오류로 앱 전체가 실행되지 않음
+- **원인 분석:** 브라우저 저장 공간 초과 또는 외부 수정으로 JSON 형식이 깨질 수 있음
+- **해결:** `try-catch`로 감싸 오류 시 빈 상태로 초기화해 앱이 항상 실행되도록 처리
+- **결과:** 데이터 손상 시에도 앱 정상 실행
+
+---
+
+## 5. 한계와 개선 방향
+
+- **로컬 저장 전용:** localStorage는 같은 브라우저에서만 유효, 서버 DB 연동으로 기기 간 동기화 가능
+- **단일 사용자:** 할 일 공유·협업 기능 없음
+- **마감일 알림 없음:** 마감 임박 항목에 대한 알림·강조 표시 미구현
+
+---
 
 <details>
-<summary>전체 화면 보기</summary>
+<summary><b>실행 방법과 파일 구조</b></summary>
 
-| 첫 화면 | 예정 필터 |
-|---|---|
-| <img src="images/home.png" width="400" alt="첫 화면"> | <img src="images/will.png" width="400" alt="예정 필터"> |
+<br />
 
-| 완성 필터 | |
-|---|---|
-| <img src="images/done.png" width="400" alt="완성 필터"> | |
-
-</details>
-
-## 파일 구조
+설치 없이 `index.html`을 브라우저로 열면 바로 실행.
 
 ```
 todo_list/
-├── index.html    # HTML 구조
-├── style.css     # 스타일 (6가지 색상 테마)
-├── script.js     # 전체 기능 로직
-└── images/       # README 스크린샷
+├── index.html        # HTML 구조
+├── style.css         # 스타일 (6가지 색상 테마)
+├── script.js         # 전체 기능 로직
+└── images/           # README 스크린샷
 ```
 
-## 실행 방법
+</details>
 
-설치 없이 `index.html`을 브라우저로 열면 바로 실행.
+---
+
+## 6. 프로젝트를 통해 얻은 경험
+
+- **데이터 구조 설계:** 그룹을 객체 키로, 순서를 별도 배열로 분리해 순서 보존과 빠른 조회를 함께 해결
+- **보안 처리:** 사용자 입력을 innerHTML에 삽입하기 전 이스케이프 처리해 XSS 방지 적용
+- **방어적 저장:** try-catch로 localStorage 복원 실패를 처리해 데이터 손상 시에도 앱 안정성 유지
